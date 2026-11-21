@@ -27,14 +27,21 @@ jobs:
           sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
 
       - name: Build siboot binary
+        working-directory: minis
         env:
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
         run: |
           cargo build --release --target aarch64-unknown-linux-musl
 
+      - name: Locate and prepare binary
+        run: |
+          find . -name siboot -type f -perm /111
+          mkdir -p bin_out
+          find . -path "*/release/siboot" -exec cp {} bin_out/siboot \;
+
       - name: Upload siboot artifact
         uses: actions/upload-artifact@v4
         with:
           name: siboot-aarch64
-          path: target/aarch64-unknown-linux-musl/release/siboot
+          path: bin_out/siboot
           if-no-files-found: error
