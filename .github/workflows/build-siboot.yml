@@ -16,6 +16,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Update SideInstaller to latest
+        run: |
+          cd SideInstaller
+          git fetch origin main
+          git checkout origin/main
+          cd ..
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
