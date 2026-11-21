@@ -21,21 +21,21 @@ jobs:
         with:
           targets: aarch64-unknown-linux-musl
 
-      - name: Install musl-tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y musl-tools gcc-aarch64-linux-gnu
+      - name: Install Zig and cargo-zigbuild
+        uses: mlugg/setup-zig@v1
+        with:
+          version: 0.13.0
+
+      - name: Install cargo-zigbuild
+        run: pip install cargo-zigbuild
 
       - name: Build siboot binary
         working-directory: minis
-        env:
-          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
         run: |
-          cargo build --release --target aarch64-unknown-linux-musl
+          cargo zigbuild --release --target aarch64-unknown-linux-musl
 
       - name: Locate and prepare binary
         run: |
-          find . -name siboot -type f -perm /111
           mkdir -p bin_out
           find . -path "*/release/siboot" -exec cp {} bin_out/siboot \;
 
